@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="keywords" content="cave-draw,为你的评论表单添加一个画图板">
+    <meta name="description" content="cave-draw - 为你的评论表单添加一个画图板">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="telephone=no,email=no" name="format-detection">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,Chrome=1">
+    <title>cave-draw - 为你的评论表单添加一个画图板</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="js/jquery.fancybox.min.css" rel="stylesheet">
+    <script src="js/jquery.fancybox.min.js"></script>
+    <style>
+        * {
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, "helvetica neue", helvetica, ubuntu, roboto, noto, "segoe ui", Arial, sans-serif;
+        }
+
+        body {
+            background-color: rgb(238, 238, 238);
+        }
+
+        header {
+            background: #fff;
+        }
+
+        a {
+            color: #999;
+            text-decoration: none;
+            border-bottom: 1px dotted #dedede;
+        }
+
+        .logo {
+            display: inline-block;
+            height: 60px;
+            font-size: 24px;
+            line-height: 60px;
+            color: #4285f4;
+            vertical-align: base-line;
+        }
+
+        .sub {
+            font-size: 20px;
+            color: #9c9c9c;
+            padding: 0 5px;
+        }
+
+        .market {
+            background-color: #4285f4;
+            height: 398px;
+            position: absolute;
+            top: 60px;
+            width: 100%;
+            outline: none;
+            display: block;
+            z-index: -1;
+        }
+
+        .container {
+            width: 80%;
+        }
+
+        .placeholder {
+            height: 56px;
+        }
+
+        @media screen and (max-width:720px) {
+            header {
+                text-align: center;
+            }
+
+            .sub {
+                display: block;
+                padding-bottom: 10px;
+            }
+
+            .container {
+                width: 100%;
+            }
+
+            .placeholder,
+            .market {
+                display: none;
+            }
+        }
+
+        .content {
+            background: #fff;
+            padding: 10px;
+        }
+
+        ul,
+        li {
+            list-style: none;
+        }
+
+        .prolist {
+            padding: 10px 20px 20px 20px;
+            font-weight: 400;
+            font-size: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Mirages Custom', 'Merriweather', 'Open Sans', "Segoe UI", Roboto, "PingFang SC", "Microsoft Yahei", "WenQuanYi Micro Hei", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        blockquote {
+            margin: 10px 0;
+            padding: 0 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+        }
+
+        #github {
+            padding: 20px 0;
+        }
+
+        .copy {
+            line-height: 60px;
+            text-align: center;
+            font-size: 14px;
+            color: #9c9c9c;
+        }
+
+        .vcontent p img {
+            max-height: 400px;
+        }
+    </style>
+    <!-- <script src="../dist/cave-draw.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/flatblowfish/cave-draw/dist/cave-draw.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/flatblowfish/cave-draw/valine-modify/Valine.min.js"></script>
+</head>
+
+<body>
+    <div class="market"></div>
+    <header>
+        <div class="container">
+            <a href="https://github.com/flatblowfish/cave-draw" class="logo" target="_blank"><img
+                    style="height:40px;margin-top:10px;" src="./logo.png" /></a>
+            <span class="sub">为你的评论表单添加一个画图板。</span>
+        </div>
+    </header>
+    <div class="container">
+        <div class="placeholder"></div>
+        <div class="content">
+            <div class="comment"></div>
+        </div>
+    </div>
+    <div class="copy">
+        &copy; 2022 <a href="https://blog.maplesugar.top/" target="_blank">枫糖</a>
+        <span id="/cave-draw/" class="leancloud_visitors" data-flag-title="cave-draw - 为你的评论表单添加一个画图板">
+            <em class="post-meta-item-text">阅读量 </em>
+            <i class="leancloud-visitors-count">loading</i>
+        </span>
+    </div>
+    <style>
+        .brush-detail p {
+            line-height: 1em !important;
+        }
+
+        .v[data-class="v"] .veditor {
+            max-height: 17em;
+        }
+
+        /* 去除查看更多 */
+        .v[data-class="v"] .vcards .vcard .vcontent.expand {
+            max-height: none;
+        }
+
+        .v[data-class="v"] .vcards .vcard .vcontent.expand::before,
+        .v[data-class="v"] .vcards .vcard .vcontent.expand::after {
+            display: none;
+        }
+
+        /* fancybox 图片背景 */
+        .fancybox-image,
+        .fancybox-spaceball {
+            background: whitesmoke;
+        }
+
+    </style>
+    <script>
+        // 由于对valine的submit按钮的click事件进行了拦截，所以，CaveDraw 初始化要在valine前面
+        new CaveDraw({
+            // 评论表单的 textarea 元素, 画图板插入到它下面
+            ele: '#veditor',
+            // 评论表单的 form 元素，用来在提交时生成 base64 格式的图片
+            // 如果评论系统没有 form 元素，则不写或者留空。此时，
+            // 相应的，会直接把 base64 格式的图片插入到评论表单的 textarea 元素
+            // formEle: '#commentform',
+            // 指定特殊的评论系统，目前只弄了valine
+            special: 'valine',
+            // 画图板的打开按钮
+            openBtn: {
+                style: 'background-color:#b37ba4;color:white;',
+                hoverStyle: 'background-color: #49d0c0;'
+            },
+            // 画图板的 canvas 元素
+            canvasStyle: 'cursor:crosshair;background:whitesmoke;/*margin-bottom:5px;border-radius:0px;*/'
+        })
+        var valine = new Valine();
+        valine.init({
+            el: '.comment',
+            app_id: 'y7iWGdTaQ1jDRU6LN8kgWuAz-MdYXbMMI',
+            app_key: '4BJtMCP3D8HAvFRAJ1HXXXVM',
+            placeholder: '评论文本*',
+            path: window.location.pathname,
+            serverURLs: 'https://y7iwgdta.api.lncldglobal.com',
+            recordIP: false,
+            visitor: true,
+            avatar: 'mm', // 1.1.7 新增(mm/identicon/monsterid/wavatar/retro)
+            // guest_info: ['nick'] // 默认 ['nick', 'mail', 'link']
+        });
+        // fancybox
+        (function () {
+            var imgCount = 0;
+            setInterval(function () {
+                var $img = $(".vcontent img[src^='data:image']");
+                if ($img.length == imgCount) {
+                    return;
+                } else {
+                    imgCount = $img.length;
+                    $img.each(function () {
+                        if ($(this).parent().attr("data-fancybox") != "gallery") {
+                            var element = document.createElement("a");
+                            $(element).attr("data-fancybox", "gallery");
+                            $(element).attr("href", $(this).attr("src"));
+                            $(this).wrap(element);
+                        }
+                    });
+                }
+            }, 1000);
+        })()
+        // $(function () {
+        //     $('[data-fancybox="gallery"]').fancybox({
+        //     });
+        // }) ;
+
+    </script>
+</body>
+
+</html>
